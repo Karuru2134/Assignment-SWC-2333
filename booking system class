@@ -1,0 +1,103 @@
+import java.util.Scanner;
+
+public class BookingSystem
+{
+    private static final int apptMax = 20;
+    private Appointment[] appointments;
+    private int apptNum;
+
+    public BookingSystem() {
+        appointments = new Appointment[apptMax];
+        apptNum= 0;
+    }
+
+    public void addAppointment(Appointment appointment) {
+        if (apptNum < apptMax) {
+            appointments[apptNum++] = appointment;
+            System.out.println("Added Successfully");
+        } else {
+            System.out.println("Appointment for this Date and Time already full, please select for another Day");
+        }
+    }
+
+    public void displayAllAppointments() {
+        System.out.println("Your Appointments:");
+        for (int i = 0; i < apptNum; i++) {
+            System.out.println(appointments[i]);
+        }
+    }
+
+    public void searchAppointmentsByDate(String date) {
+        System.out.println("Appointments for date: " + date);
+        for (int i = 0; i < apptNum; i++) {
+            if (appointments[i].getApptDate().equals(date)) {
+                System.out.println(appointments[i]);
+            }
+        }
+    }
+
+    public void cancelAppointment(String patientName) {
+    Scanner scanner = new Scanner(System.in);
+    boolean cancelAnother = true;
+
+    while (cancelAnother) {
+        for (int i = 0; i < apptNum; i++) {
+            if (appointments[i].getPatientName().equals(patientName)) {
+                appointments[i] = appointments[apptNum - 1];
+                appointments[apptNum - 1] = null;
+                apptNum--;
+                System.out.println("Appointment for " + patientName + " cancelled successfully.");
+                break;
+            }
+        }
+
+        System.out.print("Do you want to cancel another appointment? (yes/no): ");
+        String choice = scanner.nextLine();
+        if (!choice.equalsIgnoreCase("yes")) {
+            cancelAnother = false;
+        } else {
+            System.out.print("Enter the name of the patient to cancel the appointment: ");
+            patientName = scanner.nextLine();
+        }
+    }
+    }
+
+    public static void main(String[] args) {
+        BookingSystem bookingSystem = new BookingSystem();
+        Scanner scanner = new Scanner(System.in);
+
+        for (int i = 0; i < apptMax; i++) {
+            System.out.println("Enter details for appointment " + (i + 1) + ":");
+            System.out.print("Patient Name: ");
+            String patientName = scanner.nextLine();
+            System.out.print("Date (DD/mm/yyyy) : ");
+            String apptDate = scanner.nextLine();
+            System.out.print("Time (AM or PM): ");
+            String apptTime = scanner.nextLine();
+            System.out.print("Dentist Name: ");
+            String dentistName = scanner.nextLine();
+
+            Appointment appointment = new Appointment(patientName, apptDate, apptTime, dentistName);
+            bookingSystem.addAppointment(appointment);
+
+            System.out.print("Do you want to add another appointment? ");
+            String choice = scanner.nextLine();
+            if (!choice.equalsIgnoreCase("yes")) {
+                break;
+            }
+        }
+        
+        System.out.println("\nAll Appointments:");
+        bookingSystem.displayAllAppointments();
+
+        System.out.print("\nEnter your Date : ");
+        String searchDate = scanner.nextLine();
+        bookingSystem.searchAppointmentsByDate(searchDate);
+
+        System.out.print("\nEnter the name of the patient to cancel their appointment : ");
+        String cancelName = scanner.nextLine();
+        bookingSystem.cancelAppointment(cancelName);
+
+        scanner.close();
+    }
+}
